@@ -14,13 +14,12 @@ app.get("/", (req, res) => {
 
 app.get("/populate", async (req, res) => {
   try {
-    const apiData = await readFromApi();
-    const csvData = await downloadAndReadCsvFile();
+    const task1 = readFromApi();
+    const task2 = downloadAndReadCsvFile();
 
-    // parallelTaskList.push(task1, task2);
-    // let results = await Promise.all(task1, task2);
-    // let apiData = results[0];
-    // let csvData = results[1];
+    let results = await Promise.all([task1, task2]);
+    let apiData = results[0];
+    let csvData = results[1];
 
     let totalItems = [...apiData, ...csvData];
     await saveCommentsToDb(totalItems);
