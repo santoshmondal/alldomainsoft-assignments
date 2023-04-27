@@ -2,11 +2,12 @@ const express = require("express");
 const app = express();
 const port = 3000;
 
-const {
-  raedFromApiAndSavetoDb,
-  saveCommentsToDb,
-} = require("./util/save.comments");
+const { saveCommentsToDb } = require("./util/save.comments");
 const { readFromApi, downloadAndReadCsvFile } = require("./util/read.from.api");
+const { searchComments } = require("./util/search.comments");
+
+app.use(express.json()); // for parsing application/json
+app.use(express.urlencoded({ extended: true })); //
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -25,6 +26,20 @@ app.get("/populate", async (req, res) => {
     await saveCommentsToDb(totalItems);
 
     res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.json({ success: false, err: err.msg });
+  }
+});
+
+app.post("/search", async (req, res) => {
+  try {
+    const searchParams = req.body;
+    const queryParams = req.query;
+
+    let list = await searchComments(searchParams, queryParams);
+
+    res.json({ success: true, data: list });
   } catch (err) {
     console.error(err);
     res.json({ success: false, err: err.msg });
