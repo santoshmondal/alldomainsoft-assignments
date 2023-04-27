@@ -18,7 +18,22 @@ const searchComments = async (searchParams, queryParams) => {
     sort = sort || "name"; // default by name
     sortRef[sort] = 1;
 
-    let cursor = comments.find({}).sort(sortRef).limit(limit);
+    // query on different fields
+    let queryRef = {};
+    if (searchParams.name) {
+      queryRef["name"] = searchParams.name;
+    }
+
+    if (searchParams.email) {
+      queryRef["email"] = searchParams.email;
+    }
+
+    // we should text / regex here. :: TODO
+    if (searchParams.body) {
+      queryRef["body"] = searchParams.body;
+    }
+
+    let cursor = comments.find(queryRef).sort(sortRef).limit(limit);
 
     let list = [];
     await cursor.forEach((doc) => {
