@@ -13,7 +13,12 @@ const searchComments = async (searchParams, queryParams) => {
     let { limit, sort } = queryParams;
     limit = parseInt(limit) || 10;
 
-    let cursor = comments.find({}, { limit });
+    // sort key
+    let sortRef = {};
+    sort = sort || "name"; // default by name
+    sortRef[sort] = 1;
+
+    let cursor = comments.find({}).sort(sortRef).limit(limit);
 
     let list = [];
     await cursor.forEach((doc) => {
