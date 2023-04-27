@@ -9,7 +9,11 @@ const searchComments = async (searchParams, queryParams) => {
   try {
     let comments = client.db(dbName).collection(commentCollection);
 
-    let cursor = comments.find();
+    // add pagination
+    let { limit, sort } = queryParams;
+    limit = parseInt(limit) || 10;
+
+    let cursor = comments.find({}, { limit });
 
     let list = [];
     await cursor.forEach((doc) => {
